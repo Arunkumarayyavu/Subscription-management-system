@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brightloop - Subscription Management</title>
+<style>
+:root{--navy:#172554;--blue:#2563eb;--light:#f4f7fb;--text:#1e293b;--muted:#64748b;--line:#e2e8f0;--green:#16a34a;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--light);color:var(--text)}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:235px;background:var(--navy);color:white;padding:24px 14px;overflow:auto}
+.brand{font-size:21px;font-weight:bold;padding:5px 12px 28px}.brand span{color:#60a5fa}
+.nav-title{font-size:11px;color:#a5b4fc;padding:12px}.nav button{width:100%;border:0;background:transparent;color:#dbeafe;text-align:left;padding:12px;border-radius:8px;cursor:pointer;font-size:14px;margin:2px 0}
+.nav button:hover,.nav button.active{background:#2d3c70;color:white}
+.main{margin-left:235px;padding:26px;max-width:1600px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:15px}.top h1{font-size:25px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:6px}
+.user{background:white;padding:10px 14px;border:1px solid var(--line);border-radius:9px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:16px;margin-bottom:22px}.card,.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 2px 7px #0f172a08}
+.card small{color:var(--muted);font-size:13px}.card h2{margin:10px 0 3px;font-size:26px}.card .hint{font-size:12px;color:var(--green)}
+.panel{margin-bottom:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.panel h3{margin:0;font-size:17px}
+button,.btn{cursor:pointer}.primary{background:var(--blue);color:white;border:0;padding:10px 15px;border-radius:7px;font-weight:600}.secondary{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:9px 13px;border-radius:7px}.danger{background:#fee2e2;color:#b91c1c;border:0;padding:7px 10px;border-radius:6px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}input,select,textarea{padding:10px;border:1px solid #cbd5e1;border-radius:7px;font:14px Arial;background:white;min-width:0}input:focus,select:focus,textarea:focus{outline:2px solid #bfdbfe;border-color:var(--blue)}.toolbar input{flex:1;min-width:180px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600;background:#f8fafc}tr:last-child td{border-bottom:0}.status{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:bold;background:#dcfce7;color:#166534}.status.Draft{background:#f1f5f9;color:#475569}.status.Pending,.status.Quotation{background:#fef3c7;color:#92400e}.status.Closed,.status.Cancelled{background:#fee2e2;color:#991b1b}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}.field input,.field select,.field textarea{width:100%}.field.full{grid-column:1/-1}.actions{display:flex;gap:8px;margin-top:14px}.empty{text-align:center;color:var(--muted);padding:25px}
+.modal{display:none;position:fixed;inset:0;background:#0f172a88;z-index:5;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.modalbox{background:white;border-radius:13px;padding:22px;width:min(600px,100%);max-height:90vh;overflow:auto}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:17px}.close{border:0;background:#f1f5f9;border-radius:7px;padding:7px 10px}
+.chartbars{height:175px;display:flex;align-items:end;gap:13px;padding:15px 8px 0;border-bottom:1px solid var(--line)}.barwrap{flex:1;text-align:center;font-size:11px;color:var(--muted)}.bar{background:#60a5fa;border-radius:6px 6px 0 0;min-height:4px;margin-bottom:7px}
+.note{font-size:12px;color:var(--muted);line-height:1.5}
+@media(max-width:900px){.sidebar{width:190px}.main{margin-left:190px;padding:18px}.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.sidebar{position:static;width:100%;height:auto;padding:12px}.brand{padding:6px 10px 12px}.nav{display:flex;overflow:auto}.nav-title{display:none}.nav button{white-space:nowrap;width:auto}.main{margin:0;padding:14px}.top{align-items:flex-start}.cards{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.tablewrap{overflow:auto}table{min-width:650px}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+ <div class="brand">Bright<span>loop</span></div>
+ <div class="nav-title">MAIN MENU</div>
+ <nav class="nav" id="nav">
+  <button class="active" data-page="dashboard">▦ &nbsp; Dashboard</button>
+  <button data-page="customers">♙ &nbsp; Customers</button>
+  <button data-page="products">▣ &nbsp; Products</button>
+  <button data-page="plans">▤ &nbsp; Plans</button>
+  <button data-page="subscriptions">⟳ &nbsp; Subscriptions</button>
+  <button data-page="invoices">▧ &nbsp; Invoices</button>
+  <button data-page="discounts">％ &nbsp; Discounts</button>
+  <button data-page="payments">₹ &nbsp; Payments</button>
+  <button data-page="reports">▥ &nbsp; Reports</button>
+ </nav>
+ <p class="note" style="color:#cbd5e1;margin:25px 10px">Subscription Management System<br>Version 1.0</p>
+</aside>
+<main class="main">
+ <header class="top"><div><h1 id="pageTitle">Dashboard</h1><div class="sub">Manage your subscription business in one place.</div></div><div class="user">● &nbsp; Admin User</div></header>
+ <section id="content"></section>
+</main>
+<div class="modal" id="modal"><div class="modalbox"><div class="modalhead"><h3 id="modalTitle">Add</h3><button class="close" onclick="closeModal()">✕</button></div><form id="dataForm"><div class="formgrid" id="formFields"></div><div class="actions"><button class="primary" type="submit">Save</button><button class="secondary" type="button" onclick="closeModal()">Cancel</button></div></form></div></div>
+<script>
+const keys=['customers','products','plans','subscriptions','invoices','discounts','payments'];
+const seed={
+ customers:[{id:1,name:'Arun Kumar',email:'arun@example.com',phone:'9876543210',company:'Arun Stores'}],
+ products:[{id:1,name:'Business Software',type:'Software',sales:1200,cost:500,notes:'Standard business package'}],
+ plans:[{id:1,name:'Monthly Standard',price:1200,cycle:'Monthly',quantity:1,start:'2026-01-01',end:'2027-01-01'}],
+ subscriptions:[{id:1,customer:'Arun Kumar',plan:'Monthly Standard',start:'2026-10-01',expiry:'2027-10-01',amount:1200,status:'Active'}],
+ invoices:[{id:1,customer:'Arun Kumar',date:'2026-10-01',due:'2026-11-01',amount:1200,status:'Paid'}],
+ discounts:[],payments:[{id:1,invoice:'INV-1',method:'UPI',amount:1200,date:'2026-10-01',note:'Demo payment'}]
+};
+let db={};keys.forEach(k=>{try{db[k]=JSON.parse(localStorage.getItem('bl_'+k))||seed[k]}catch(e){db[k]=seed[k]}});
+let page='dashboard',editId=null;
+function save(){keys.forEach(k=>localStorage.setItem('bl_'+k,JSON.stringify(db[k])))}
+function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(p){page=p;document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));document.getElementById('pageTitle').textContent=p[0].toUpperCase()+p.slice(1);render()}
+document.getElementById('nav').addEventListener('click',e=>{let b=e.target.closest('button[data-page]');if(b)go(b.dataset.page)});
+function status(s){return `<span class="status ${esc(s)}">${esc(s)}</span>`}
+function dashboard(){
+ let revenue=db.payments.reduce((a,x)=>a+Number(x.amount),0),active=db.subscriptions.filter(x=>x.status==='Active').length,owed=db.invoices.filter(x=>x.status!=='Paid').reduce((a,x)=>a+Number(x.amount),0),overdue=db.invoices.filter(x=>x.status!=='Paid'&&x.due<new Date().toISOString().slice(0,10)).length;
+ let months=['May','Jun','Jul','Aug','Sep','Oct'],vals=months.map((m,i)=>db.payments.reduce((a,x)=>a+(new Date(x.date).getMonth()===i+4?Number(x.amount):0),0)),max=Math.max(...vals,1);
+ return `<div class="cards">
+ <div class="card"><small>Total Revenue</small><h2>${money(revenue)}</h2><div class="hint">Recorded payments</div></div>
+ <div class="card"><small>Active Subscriptions</small><h2>${active}</h2><div class="hint">Currently active</div></div>
+ <div class="card"><small>Outstanding Amount</small><h2>${money(owed)}</h2><div class="hint">Awaiting payment</div></div>
+ <div class="card"><small>Overdue Invoices</small><h2>${overdue}</h2><div class="hint">Need follow-up</div></div></div>
+ <div class="grid2"><div class="panel"><div class="panel-head"><h3>Revenue Overview</h3></div><div class="chartbars">${vals.map((v,i)=>`<div class="barwrap"><div class="bar" style="height:${Math.max(4,v/max*135)}px"></div>${months[i]}<br>${v?money(v):''}</div>`).join('')}</div><p class="note">Simple view based on payment dates recorded in this browser.</p></div>
+ <div class="panel"><div class="panel-head"><h3>Quick Actions</h3></div><div style="display:grid;gap:10px"><button class="secondary" onclick="openAdd('customers')">＋ Add Customer</button><button class="secondary" onclick="openAdd('subscriptions')">＋ Create Subscription</button><button class="secondary" onclick="openAdd('invoices')">＋ Create Invoice</button><button class="secondary" onclick="openAdd('payments')">＋ Record Payment</button></div></div></div>
+ <div class="panel"><div class="panel-head"><h3>Recent Invoices</h3><button class="secondary" onclick="go('invoices')">View all</button></div>${table('invoices',['id','customer','date','amount','status'])}</div>`;
+}
+const config={
+ customers:{label:'Customer',fields:[['name','Customer Name','text'],['email','Email','email'],['phone','Phone','tel'],['company','Company','text']]},
+ products:{label:'Product',fields:[['name','Product Name','text'],['type','Product Type','text'],['sales','Sales Price','number'],['cost','Cost Price','number'],['notes','Notes','text']]},
+ plans:{label:'Plan',fields:[['name','Plan Name','text'],['price','Price','number'],['cycle','Billing Cycle','select','Daily,Weekly,Monthly,Yearly'],['quantity','Minimum Quantity','number'],['start','Available From','date'],['end','Available Until','date']]},
+ subscriptions:{label:'Subscription',fields:[['customer','Customer','selectData','customers'],['plan','Plan','selectData','plans'],['start','Start Date','date'],['expiry','Expiry Date','date'],['amount','Amount','number'],['status','Status','select','Draft,Quotation,Confirmed,Active,Closed,Paused']]},
+ invoices:{label:'Invoice',fields:[['customer','Customer','selectData','customers'],['date','Invoice Date','date'],['due','Due Date','date'],['amount','Amount','number'],['status','Status','select','Draft,Confirmed,Paid,Cancelled']]},
+ discounts:{label:'Discount',fields:[['name','Discount Name','text'],['kind','Discount Type','select','Fixed,Percentage'],['value','Discount Value','number'],['minimum','Minimum Purchase','number'],['start','Start Date','date'],['end','End Date','date'],['limit','Usage Limit','number']]},
+ payments:{label:'Payment',fields:[['invoice','Invoice Number','text'],['method','Payment Method','select','Cash,UPI,Card,Bank Transfer,Other'],['amount','Amount','number'],['date','Payment Date','date'],['note','Note','text']]}
+};
+const columns={customers:['id','name','email','phone','company'],products:['id','name','type','sales','cost'],plans:['id','name','price','cycle','quantity'],subscriptions:['id','customer','plan','start','expiry','amount','status'],invoices:['id','customer','date','due','amount','status'],discounts:['id','name','kind','value','minimum','start','end'],payments:['id','invoice','method','amount','date','note']};
+function display(k,v){if(['sales','cost','price','amount','value','minimum'].includes(k))return money(v);if(k==='status')return status(v);return esc(v)}
+function table(k,cols=columns[k]){let rows=db[k];if(!rows.length)return '<div class="empty">No records found. Click Add New to create one.</div>';return `<div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${c==='id'?'ID':c[0].toUpperCase()+c.slice(1)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${display(c,r[c])}</td>`).join('')}<td><button class="secondary" onclick="editRow('${k}',${r.id})">Edit</button> <button class="danger" onclick="delRow('${k}',${r.id})">Delete</button></td></tr>`).join('')}</tbody></table></div>`}
+function section(k){return `<div class="panel"><div class="panel-head"><h3>All ${k}</h3><button class="primary" onclick="openAdd('${k}')">＋ Add ${config[k].label}</button></div><div class="toolbar"><input id="searchBox" placeholder="Search ${k}..." oninput="filterRows('${k}')"><button class="secondary" onclick="exportCSV('${k}')">Export CSV</button></div><div id="tableArea">${table(k)}</div></div>`}
+function filterRows(k){let q=document.getElementById('searchBox').value.toLowerCase(),cols=columns[k],rows=db[k].filter(r=>cols.some(c=>String(r[c]??'').toLowerCase().includes(q)));document.getElementById('tableArea').innerHTML=rows.length?`<div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}<th>Actions</th></tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${display(c,r[c])}</td>`).join('')}<td><button class="secondary" onclick="editRow('${k}',${r.id})">Edit</button> <button class="danger" onclick="delRow('${k}',${r.id})">Delete</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No matching records.</div>'}
+function render(){let c=document.getElementById('content');if(page==='dashboard')c.innerHTML=dashboard();else if(page==='reports'){c.innerHTML=`<div class="cards"><div class="card"><small>Revenue Collected</small><h2>${money(db.payments.reduce((a,x)=>a+ +x.amount,0))}</h2></div><div class="card"><small>Invoice Count</small><h2>${db.invoices.length}</h2></div><div class="card"><small>Paid Invoices</small><h2>${db.invoices.filter(x=>x.status==='Paid').length}</h2></div><div class="card"><small>Overdue</small><h2>${db.invoices.filter(x=>x.status!=='Paid'&&x.due<new Date().toISOString().slice(0,10)).length}</h2></div></div><div class="panel"><h3>Invoice Report</h3>${table('invoices')}</div><div class="panel"><h3>Payment Report</h3>${table('payments')}</div>`}else c.innerHTML=section(page)}
+function openAdd(k,row=null){page=k;editId=row?row.id:null;document.getElementById('modalTitle').textContent=(row?'Edit ':'Add ')+config[k].label;let fields=config[k].fields;document.getElementById('formFields').innerHTML=fields.map(([name,label,type,opts])=>{let val=row?.[name]??'';let input=type==='select'?`<select name="${name}" required><option value="">Choose</option>${opts.split(',').map(o=>`<option ${val===o?'selected':''}>${o}</option>`).join('')}</select>`:type==='selectData'?`<select name="${name}" required><option value="">Choose</option>${db[opts].map(o=>{let v=o.name;return `<option ${val===v?'selected':''}>${esc(v)}</option>`}).join('')}</select>`:`<input name="${name}" type="${type}" value="${esc(val)}" ${type==='number'?'min="0" step="0.01"':''} ${name==='email'?'':'required'}>`;return `<label class="field">${label}${input}</label>`}).join('');document.getElementById('modal').classList.add('show');document.getElementById('dataForm').dataset.kind=k}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+document.getElementById('dataForm').addEventListener('submit',e=>{e.preventDefault();let f=new FormData(e.target),k=e.target.dataset.kind,obj={};for(let [a,b] of f)obj[a]=['price','quantity','amount','sales','cost','value','minimum','limit'].includes(a)?Number(b):b;if(editId){let i=db[k].findIndex(x=>x.id===editId);db[k][i]={...db[k][i],...obj}}else{obj.id=Math.max(0,...db[k].map(x=>x.id))+1;db[k].push(obj)}save();closeModal();render()});
+function editRow(k,id){openAdd(k,db[k].find(x=>x.id===id))}
+function delRow(k,id){if(confirm('Delete this record?')){db[k]=db[k].filter(x=>x.id!==id);save();render()}}
+function exportCSV(k){let cols=columns[k],lines=[cols.join(','),...db[k].map(r=>cols.map(c=>'"'+String(r[c]??'').replace(/"/g,'""')+'"').join(','))];let blob=new Blob([lines.join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=k+'.csv';a.click();URL.revokeObjectURL(a.href)}
+render();
+</script>
+</body>
+</html>
